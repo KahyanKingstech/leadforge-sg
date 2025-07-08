@@ -74,6 +74,21 @@ def lead_form():
 
     return render_template('form.html')
 
+@app.route('/view')
+def view_leads():
+    conn = get_connection()
+    cur = conn.cursor()
+    cur.execute('SELECT id, name, email, phone, message, created_at FROM leads ORDER BY created_at DESC')
+    leads = cur.fetchall()
+    cur.close()
+    conn.close()
+
+    html = "<h1>All Leads</h1><table border='1'><tr><th>ID</th><th>Name</th><th>Email</th><th>Phone</th><th>Message</th><th>Created At</th></tr>"
+    for lead in leads:
+        html += f"<tr><td>{lead[0]}</td><td>{lead[1]}</td><td>{lead[2]}</td><td>{lead[3]}</td><td>{lead[4]}</td><td>{lead[5]}</td></tr>"
+    html += "</table>"
+    return html
+
 if __name__ == '__main__':
     init_db()
     app.run(debug=True, port=5001)
